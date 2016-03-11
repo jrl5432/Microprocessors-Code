@@ -21,25 +21,10 @@ void Configure_Accel_GPIO ()
 	
   GPIO_Init.Pin = GPIO_PIN_0;
 	GPIO_Init.Mode = GPIO_MODE_IT_RISING;
-	GPIO_Init.Speed = GPIO_SPEED_FREQ_HIGH;
-	GPIO_Init.Pull = GPIO_PULLDOWN;
+	GPIO_Init.Speed = GPIO_SPEED_FREQ_MEDIUM;
+	GPIO_Init.Pull = GPIO_NOPULL;
 	HAL_GPIO_Init(GPIOE, &GPIO_Init);
 	
-	//HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
-	
-	HAL_NVIC_SetPriority(EXTI0_IRQn, 0, 0);
-	HAL_NVIC_EnableIRQ(EXTI0_IRQn);
-	
-	
-	/*Alternate method of initializing GPIOs
-	GPIO_StructInit(&GPIO_InitStruct);
-	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN;
-	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
-	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0;
-	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_UP;
-	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_100MHz;
-	GPIO_Init(GPIOE, &GPIO_InitStruct);
-	*/
 	
 }
 
@@ -54,7 +39,7 @@ void Configure_Accel(void)
 	LIS3DSH_InitStruct.Axes_Enable = LIS3DSH_X_ENABLE | LIS3DSH_Y_ENABLE | LIS3DSH_Z_ENABLE;
 	LIS3DSH_InitStruct.Full_Scale = LIS3DSH_FULLSCALE_4;
 	LIS3DSH_InitStruct.AA_Filter_BW = LIS3DSH_AA_BW_200;
-	LIS3DSH_InitStruct.Continous_Update = LIS3DSH_ContinousUpdate_Enabled;
+	LIS3DSH_InitStruct.Continous_Update = LIS3DSH_ContinousUpdate_Disabled;
 	LIS3DSH_InitStruct.Self_Test = LIS3DSH_SELFTEST_NORMAL;
 	
 	
@@ -65,4 +50,17 @@ void Configure_Accel(void)
 	
 	LIS3DSH_DataReadyInterruptConfig(&DRYInterruptConfig);
 	LIS3DSH_Init(&LIS3DSH_InitStruct);	
+	
+	HAL_NVIC_SetPriority(EXTI0_IRQn, 0, 0);
+	HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+}
+
+void EXTI0_IRQHandler(void)
+{
+   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
+}
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+	printf("Hello!");
 }
